@@ -92,15 +92,17 @@ systemctl restart influxdb
 ```
 
 ## Collect and storing metrics
-In this article, there are 4 types of metric we will collect and store it to InfluxDB:
+In this article, there are 5 types of metric we will collect and store it to InfluxDB:
 * Node metrics via `monerod` RPC ([NodeMetrics.sh](examples/bash/NodeMetrics.sh))
 * XMRig worker metrics ([XmrigMetrics.sh](examples/bash/XmrigMetrics.sh))
 * Pool metrics ([PoolMetrics.sh](examples/bash/PoolMetrics.sh))
-* Exchange metrics ([IndodaxExchange.sh](examples/bash/PoolMetrics.sh))
+* Exchange metrics ([IndodaxExchange.sh](examples/bash/IndodaxExchange.sh) & [KrakenExchange.sh](examples/bash/KrakenExchange.sh))
+* `monero-project/monero` GitHub metrics ([GitHubMetrics.sh](examples/bash/GitHubMetrics.sh))
+* `r/Monero` Reddit metrics ([RedditMetrics.sh](examples/bash/RedditMetrics.sh))
 
 You can find all example files under [examples](examples) directory.
 
-All script written in bash, `jq` package is required to run all of these script. In additional, and `bc` package is required to run `PoolMetrics.sh`.
+All script written in bash, `jq` and `curl` package is required to run all of these script. In additional, and `bc` package is required to run `PoolMetrics.sh`.
 
 Make sure all bash script is executable and run them using cron job.
 
@@ -149,9 +151,9 @@ curl -i -XPOST 'http://192.168.100.1:8086/write?db=MoneroMetrics' -u monero:some
 ```
 
 ### Coin Exchange metrics
-File: [examples/bash/IndodaxExchange.sh](examples/bash/IndodaxExchange.sh)
+Files: [examples/bash/IndodaxExchange.sh](examples/bash/IndodaxExchange.sh) and [examples/bash/KrakenExchange.sh](examples/bash/KrakenExchange.sh)
 
-If you like to add coin price, market, etc, you can use your favorite exchange API. In this example, I use Indodax API as my local currency exchange. You may create your own script to do that. Some exchange like [Kraken provide an example API client](https://www.kraken.com/features/api#example-api-code) too.  
+If you like to add coin price, market, etc, you can use your favorite exchange API. In this example, I use Indodax API as my local currency exchange. You may create your own script to do that. Some exchange like [Kraken provide an example API client](https://www.kraken.com/features/api#example-api-code), but if you like to use simple bash script, you can take a look into [examples/bash/KrakenExchange.sh](examples/bash/KrakenExchange.sh).  
 
 
 ## Create the dashboard

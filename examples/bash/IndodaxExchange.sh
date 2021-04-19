@@ -26,7 +26,7 @@ Xmr7d=$(echo $CoinPrices | jq -r '.prices_7d.xmridr')
 
 # send metrics to InfluxDB
 # TODO: Don't forget to change InfluxDB host, user and password below
-curl -i -XPOST 'http://192.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=XMR High=$XmrHigh,Low=$XmrLow,Vol=$XmrVol,VolIdr=$XmrVolIdr,Last=$XmrLast,24h=$Xmr24h,7d=$Xmr7d" -u monero:some_password &
+curl -i -XPOST 'http://192.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=XMR,Exchange=Indodax Last=$XmrLast,High=$XmrHigh,Low=$XmrLow,Vol=$XmrVol,VolCurrency=$XmrVolIdr,24h=$Xmr24h,7d=$Xmr7d" -u monero:some_password &
 
 
 # You can add other currency if you want to.
@@ -47,7 +47,7 @@ curl -i -XPOST 'http://192.168.1.248:8086/write?db=MoneroMetrics' --data-binary 
 #echo "BTC 24h: $Btc24h"
 #echo "BTC 7d: $Btc7d"
 
-#curl -i -XPOST 'http://92.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=BTC High=$BtcHigh,Low=$BtcLow,Vol=$BtcVol,VolIdr=$BtcVolIdr,Last=$BtcLast,24h=$Btc24h,7d=$Btc7d" -u monero:some_password &
+#curl -i -XPOST 'http://92.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=BTC,Exchange=Indodax Last=$BtcLast,High=$BtcHigh,Low=$BtcLow,Vol=$BtcVol,VolCurrency=$BtcVolIdr,24h=$Btc24h,7d=$Btc7d" -u monero:some_password &
 
 # or ETH
 #EthHigh=$(echo $CoinPrices | jq -r '.tickers.eth_idr.high')
@@ -66,6 +66,6 @@ curl -i -XPOST 'http://192.168.1.248:8086/write?db=MoneroMetrics' --data-binary 
 #echo "ETH 24h: $Eth24h"
 #echo "ETH 7d: $Eth7d"
 
-#curl -i -XPOST 'http://92.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=ETH High=$EthHigh,Low=$EthLow,Vol=$EthVol,VolIdr=$EthVolIdr,Last=$EthLast,24h=$Eth24h,7d=$Eth7d" -u monero:some_password &
+#curl -i -XPOST 'http://92.168.1.248:8086/write?db=MoneroMetrics' --data-binary "CoinInfo,Coin=ETH,Exchange=Indodax Last=$EthLast,High=$EthHigh,Low=$EthLow,Vol=$EthVol,VolCurrency=$EthVolIdr,24h=$Eth24h,7d=$Eth7d" -u monero:some_password &
 
 wait
