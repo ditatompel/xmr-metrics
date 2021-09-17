@@ -137,7 +137,7 @@ In order to grab XMRig worker metrics, we need to enable XMRig HTTP API for each
 ### Pool metrics  
 File: [examples/bash/PoolMetrics.sh](examples/bash/PoolMetrics.sh)
 
-For now, only mining pool who use [jtgrassie/monero-pool](https://github.com/jtgrassie/monero-pool) and [Snipa22/nodejs-pool](https://github.com/Snipa22/nodejs-pool) backend is supported. Feel free to edit the script and add your favorite mining pool backend.
+For now, only mining pool who use [jtgrassie/monero-pool](https://github.com/jtgrassie/monero-pool), [Snipa22/nodejs-pool](https://github.com/Snipa22/nodejs-pool) and [SChernykh/p2pool](https://github.com/SChernykh/p2pool) backend is supported. Feel free to edit the script and add your favorite mining pool backend.
 
 it's quite easy to find pool backend and usually each frontend design quite similar. For example: monerop.com, xmrvsbeast.com using jtgrassie and moneroocean.stream, moneromine.co using snipa22.
 

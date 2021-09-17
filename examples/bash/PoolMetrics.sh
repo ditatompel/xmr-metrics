@@ -2,8 +2,8 @@
 # PoolMetrics.sh
 #
 # This script used to fetch pool information via its API and store it to
-# InfluxDB. Currently, only mining pool who use jtgrassie and snipa22 backend is
-# supported.
+# InfluxDB. Currently, only mining pool who use jtgrassie, snipa22, and
+# SChernykh P2Pool backend is supported.
 # Feel free to edit this script and add your favorite mining pool backend. =)
 
 
@@ -25,11 +25,11 @@
 #                       frontend design quite similar.
 #                       For example: monerop.com, xmrvsbeast.com using jtgrassie
 #                       and moneroocean.stream, moneromine.co using snipa22.
-# XMR_WALLET_ADDRESS  : Your XMR address
+# XMR_WALLET_ADDRESS  : Your XMR address (Not required for P2Pool)
 # Eg:
 PoolHosts=(
     "xmrvsbeast|https://xmrvsbeast.com|jtgrassie|888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H"
-    "xmrindo|https://xmrindo.my.id|jtgrassie|888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H"
+    "xmrindo|https://xmrindo.my.id/stats|schernykh|WALLET_ADDRESS_IS_NOT_REQUIRED_FOR_P2POOL"
     "xmrfast|https://xmrfast.com/api|snipa22|888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H"
     "moneroocean|https://api.moneroocean.stream|snipa22|888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H"
 )
@@ -61,6 +61,28 @@ do
         #NetworkHR=$(echo $PoolInfo | jq -r '.network_hashrate')
         #PayMin=$(echo $PoolInfo | jq -r '.payment_threshold')
         #PoolFee=$(echo $PoolInfo | jq -r '.pool_fee')
+    elif [[ ${POOLPARAMS[2]} == 'schernykh' ]]
+    then
+        # condition when pool is use https://github.com/SChernykh/p2pool
+        PoolInfo=$(curl -s ${POOLPARAMS[1]}/pool/stats -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache')
+
+        # Get information about network difficulty and network height based
+        # from pool API.
+        NetworkInfo=$(curl -s ${POOLPARAMS[1]}/network/stats -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache')
+
+        PoolHR=$(echo $PoolInfo | jq -r '.pool_statistics.hashRate')
+        LastBlockFound=$(echo $PoolInfo | jq -r '.pool_statistics.lastBlockFoundTime')
+        PoolBlockFound=$(echo $PoolInfo | jq -r '.pool_statistics.totalBlocksFound')
+        ConnectedMiners=$(echo $PoolInfo | jq -r '.pool_statistics.miners')
+
+        NetworkDiff=$(echo $NetworkInfo | jq -r '.difficulty')
+        NetworkHeight=$(echo $NetworkInfo | jq -r '.height')
+
+        # For now, lest skip information about Round Hashes, Miner Hashrates and
+        # Miner Balance because p2pool is not public pool.
+        RoundHashes=0
+        MinerHashrate=0
+        MinerBalance=0
     else
         # condition when pool is use https://github.com/Snipa22/nodejs-pool
 
