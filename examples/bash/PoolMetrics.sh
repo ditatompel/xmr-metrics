@@ -2,8 +2,8 @@
 # PoolMetrics.sh
 #
 # This script used to fetch pool information via its API and store it to
-# InfluxDB. Currently, only mining pool who use jtgrassie, snipa22, and
-# SChernykh P2Pool backend is supported.
+# InfluxDB. Currently, only mining pool who use jtgrassie and snipa22 backend is
+# supported.
 # Feel free to edit this script and add your favorite mining pool backend. =)
 
 
@@ -25,7 +25,7 @@
 #                       frontend design quite similar.
 #                       For example: monerop.com, xmrvsbeast.com using jtgrassie
 #                       and moneroocean.stream, moneromine.co using snipa22.
-# XMR_WALLET_ADDRESS  : Your XMR address (Not required for P2Pool)
+# XMR_WALLET_ADDRESS  : Your XMR address
 # Eg:
 PoolHosts=(
     "xmrvsbeast|https://xmrvsbeast.com|jtgrassie|888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkRxbANsAnjyPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H"
@@ -70,6 +70,10 @@ do
         # from pool API.
         NetworkInfo=$(curl -s ${POOLPARAMS[1]}/network/stats -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache')
 
+        # Since P2Pool v1.2, Users can pass --stratum-api to command line to
+        # enable statistics from StratumServer status command in JSON format.
+        StratumInfo=$(curl -s ${POOLPARAMS[1]}/local/stats -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Connection: keep-alive' -H 'Pragma: no-cache' -H 'Cache-Control: no-cache')
+
         PoolHR=$(echo $PoolInfo | jq -r '.pool_statistics.hashRate')
         LastBlockFound=$(echo $PoolInfo | jq -r '.pool_statistics.lastBlockFoundTime')
         PoolBlockFound=$(echo $PoolInfo | jq -r '.pool_statistics.totalBlocksFound')
@@ -78,10 +82,10 @@ do
         NetworkDiff=$(echo $NetworkInfo | jq -r '.difficulty')
         NetworkHeight=$(echo $NetworkInfo | jq -r '.height')
 
-        # For now, lest skip information about Round Hashes, Miner Hashrates and
-        # Miner Balance because p2pool is not public pool.
+        MinerHashrate=$(echo $StratumInfo | jq -r '.hashrate_15m')
+        # For now, lest skip information about Round Hashes and Miner Balance
+        # because p2pool is not public pool.
         RoundHashes=0
-        MinerHashrate=0
         MinerBalance=0
     else
         # condition when pool is use https://github.com/Snipa22/nodejs-pool
